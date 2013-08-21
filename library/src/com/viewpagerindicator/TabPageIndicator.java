@@ -66,7 +66,7 @@ public class TabPageIndicator extends HorizontalScrollView implements PageIndica
     // Used for Colorising the Tabs
 	private Integer mColourFilterColor;
 	private ColorFilter mColorFilter;
-
+	private Integer mTextColour;
 	
     public TabPageIndicator(Context context) {
         this(context, null);
@@ -79,12 +79,17 @@ public class TabPageIndicator extends HorizontalScrollView implements PageIndica
         mTabLayout = new IcsLinearLayout(context, R.attr.vpiTabPageIndicatorStyle);
         addView(mTabLayout, new ViewGroup.LayoutParams(WRAP_CONTENT, MATCH_PARENT));
     }
-
+    
     private void addTab(int index, CharSequence text, int iconResId) {
         final TabView tabView = new TabView(getContext());
         tabView.mIndex = index;
         tabView.setFocusable(true);
         tabView.setOnClickListener(mTabClickListener);
+        
+        if(mTextColour != null){
+        	tabView.setTextColor(mTextColour);
+        }
+        
         tabView.setText(text);
 
 		if(mColourFilterColor != null){
@@ -129,11 +134,6 @@ public class TabPageIndicator extends HorizontalScrollView implements PageIndica
 		return mColorFilter;
 	}
 
-	public void setColourFilterColor(Integer colourFilter){
-		mColorFilter = null;
-		mColourFilterColor = colourFilter;
-	}
-	
     public void notifyDataSetChanged() {
         mTabLayout.removeAllViews();
         PagerAdapter adapter = mViewPager.getAdapter();
@@ -167,7 +167,7 @@ public class TabPageIndicator extends HorizontalScrollView implements PageIndica
             // Re-post the selector we saved
             post(mTabSelector);
         }
-    } 
+    }
 	
     @Override
     public void onDetachedFromWindow() {
@@ -177,7 +177,7 @@ public class TabPageIndicator extends HorizontalScrollView implements PageIndica
         }
     }
 
-    @Override
+	@Override
     public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         final boolean lockedExpanded = widthMode == MeasureSpec.EXACTLY;
@@ -202,8 +202,8 @@ public class TabPageIndicator extends HorizontalScrollView implements PageIndica
             // Recenter the tab display if we're at a new (scrollable) size.
             setCurrentItem(mSelectedTabIndex);
         }
-    }
-
+    } 
+	
     @Override
     public void onPageScrolled(int arg0, float arg1, int arg2) {
         if (mListener != null) {
@@ -225,6 +225,11 @@ public class TabPageIndicator extends HorizontalScrollView implements PageIndica
             mListener.onPageSelected(arg0);
         }
     }
+
+    public void setColourFilterColor(Integer colourFilter){
+		mColorFilter = null;
+		mColourFilterColor = colourFilter;
+	}
 
     @Override
     public void setCurrentItem(int item) {
@@ -252,6 +257,10 @@ public class TabPageIndicator extends HorizontalScrollView implements PageIndica
 
     public void setOnTabReselectedListener(OnTabReselectedListener listener) {
         mTabReselectedListener = listener;
+    }
+
+    public void setTextColour(Integer colour){
+    	mTextColour = colour;
     }
 
     @Override
@@ -291,7 +300,7 @@ public class TabPageIndicator extends HorizontalScrollView implements PageIndica
 
     private class TabView extends TextView {
         private int mIndex;
-
+        
         public TabView(Context context) {
             super(context, null, R.attr.vpiTabPageIndicatorStyle);
         }
